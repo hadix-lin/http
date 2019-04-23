@@ -7,11 +7,9 @@ import io.github.hadixlin.http.Json
 import io.github.hadixlin.http.Method.*
 import io.github.hadixlin.http.ResponseHandler
 import okhttp3.*
-import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.util.*
 
 /** @author hadix
  */
@@ -150,8 +148,12 @@ class OkHttpRequest internal constructor(url: String, http: OkHttp) : AbstractHt
 	@Throws(HttpException::class)
 	override fun submitForFile(): File {
 		return submit { body ->
-			val tmpFile = File(FileUtils.getTempDirectory(), UUID.randomUUID().toString())
-			FileUtils.copyInputStreamToFile(body.byteStream(), tmpFile)
+			val tmpFile = createTempFile()
+			body.byteStream().use { input ->
+				tmpFile.outputStream().use { output ->
+					input.copyTo(output)
+				}
+			}
 			tmpFile
 		}
 	}
