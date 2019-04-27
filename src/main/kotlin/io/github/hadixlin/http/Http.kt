@@ -10,84 +10,89 @@ import java.io.File
  */
 interface Http : AutoCloseable {
 
-	fun newReq(url: String): HttpRequest
+    fun newReq(url: String): HttpRequest
 
-	abstract class Builder {
+    abstract class Builder<BT> {
 
-		private var connTimeout = -1
-		private var soTimeout = -1
-		private var maxConnTotal = -1
-		private var cacheDir: File? = null
+        private var connTimeout = -1
+        private var soTimeout = -1
+        private var maxConnTotal = -1
+        private var cacheDir: File? = null
 
-		abstract fun build(): Http
+        abstract val internalBuilder: BT
 
-		fun connTimeout(): Int {
-			return connTimeout
-		}
+        abstract fun build(): Http
 
-		fun connTimeout(connTimeout: Int): Builder {
-			this.connTimeout = connTimeout
-			return this
-		}
+        fun connTimeout(): Int {
+            return connTimeout
+        }
 
-		fun soTimeout(): Int {
-			return soTimeout
-		}
+        fun connTimeout(connTimeout: Int): Builder<BT> {
+            this.connTimeout = connTimeout
+            return this
+        }
 
-		fun soTimeout(soTimeout: Int): Builder {
-			this.soTimeout = soTimeout
-			return this
-		}
+        fun soTimeout(): Int {
+            return soTimeout
+        }
 
-		fun maxConnTotal(): Int {
-			return maxConnTotal
-		}
+        fun soTimeout(soTimeout: Int): Builder<BT> {
+            this.soTimeout = soTimeout
+            return this
+        }
 
-		fun maxConnTotal(maxConnTotal: Int): Builder {
-			this.maxConnTotal = maxConnTotal
-			return this
-		}
+        fun maxConnTotal(): Int {
+            return maxConnTotal
+        }
 
-		fun cacheDir(): File? {
-			return cacheDir
-		}
+        fun maxConnTotal(maxConnTotal: Int): Builder<BT> {
+            this.maxConnTotal = maxConnTotal
+            return this
+        }
 
-		/** 缓存支持仅在使用okhttp实现时有效  */
-		fun cacheDir(cacheDir: File): Builder {
-			this.cacheDir = cacheDir
-			return this
-		}
-	}
+        fun cacheDir(): File? {
+            return cacheDir
+        }
 
-	companion object {
-		private val log: Logger = LoggerFactory.getLogger(Http::class.java)
+        /** 缓存支持仅在使用okhttp实现时有效  */
+        fun cacheDir(cacheDir: File): Builder<BT> {
+            this.cacheDir = cacheDir
+            return this
+        }
+    }
 
-		private val INSTANCE = createInstance()
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(Http::class.java)
 
-		fun createInstance(): Http {
-			return newBuilder().build()
-		}
+        private val INSTANCE = createInstance()
 
-		fun newBuilder(): Builder {
-			var builder: Builder
-			try {
-				Class.forName("okhttp3.OkHttpClient")
-				builder = OkHttp.builder()
-			} catch (e: ClassNotFoundException) {
-				try {
-					Class.forName("org.apache.http.client.HttpClient")
-					builder = ApacheHttp.builder()
-				} catch (e1: ClassNotFoundException) {
-					log.error("没有找到Http实现,需要Apache HttpClient或OkHttp")
-					throw UnsupportedOperationException("没有找到Http实现,需要Apache HttpClient或OkHttp")
-				}
+        @JvmStatic
+        fun createInstance(): Http {
+            return newBuilder().build()
+        }
 
-			}
-			return builder
-		}
+        @JvmStatic
+        fun newBuilder(): Builder<*> {
+            var builder: Builder<*>
+            try {
+                Class.forName("okhttp3.OkHttpClient")
+                builder = OkHttp.internalBuilder()
+            } catch (e: ClassNotFoundException) {
+                try {
+                    Class.forName("org.apache.http.client.HttpClient")
+                    builder = ApacheHttp.builder()
+                } catch (e1: ClassNotFoundException) {
+                    log.error("没有找到Http实现,需要Apache HttpClient或OkHttp")
+                    throw UnsupportedOperationException("没有找到Http实现,需要Apache HttpClient或OkHttp")
+                }
 
-		fun req(url: String): HttpRequest {
-			return INSTANCE.newReq(url)
-		}
-	}
+            }
+            return builder
+        }
+
+        @JvmStatic
+        fun req(url: String): HttpRequest {
+            return INSTANCE.newReq(url)
+        }
+    }
 }

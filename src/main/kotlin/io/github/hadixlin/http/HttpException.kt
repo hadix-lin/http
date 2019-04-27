@@ -6,31 +6,31 @@ package io.github.hadixlin.http
  */
 class HttpException : RuntimeException {
 
-	private val reqUri: String
-	private val params: String
-	private val code: Int
+    private val reqUri: String
+    private val params: String
+    private val code: Int
 
-	constructor(code: Int, reqUri: String, params: String)
-		: super("$code $reqUri : $params") {
-		this.reqUri = reqUri
-		this.params = params
-		this.code = code
-	}
+    constructor(code: Int, reqUri: String, params: String)
+        : super("$code $reqUri : $params") {
+        this.reqUri = reqUri
+        this.params = params
+        this.code = code
+    }
 
-	constructor(reqUri: String, params: String, cause: Throwable)
-		: this(0, reqUri, params, cause)
+    constructor(reqUri: String, params: String, cause: Throwable)
+        : this(0, reqUri, params, cause)
 
-	constructor(code: Int, reqUri: String, params: String, cause: Throwable)
-		: super("$code $reqUri : $params", cause) {
-		this.reqUri = reqUri
-		this.params = params
-		this.code = code
-	}
+    constructor(code: Int, reqUri: String, params: String, cause: Throwable)
+        : super("$code $reqUri : $params", cause) {
+        this.reqUri = reqUri
+        this.params = params
+        this.code = code
+    }
 
-	constructor(reqUri: String, params: String, message: String)
-		: super("$reqUri : $params $message") {
-		this.reqUri = reqUri
-		this.params = params
-		this.code = 0
-	}
+    constructor(reqUri: String, params: String, message: String)
+        : super("$reqUri : $params $message") {
+        this.reqUri = reqUri
+        this.params = params
+        this.code = 0
+    }
 }
