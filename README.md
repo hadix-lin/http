@@ -1,4 +1,6 @@
 ## http
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhadix-lin%2Fhttp.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhadix-lin%2Fhttp?ref=badge_shield)
+
 
 链式调用风格的http客户端api抽象.
 
@@ -45,3 +47,7 @@ internalBuilder.setXXX().setXXX()
 // 使用Http.Builder的build方法构建实例
 Http http = builder.build();
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhadix-lin%2Fhttp.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhadix-lin%2Fhttp?ref=badge_large)
